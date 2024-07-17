@@ -6,14 +6,17 @@ import (
 )
 
 func main() {
+	const filepathRoot = "."
 	const port = "8080"
+
 	// This creates a new HTTP request multiplexer
 	httpServerMux := http.NewServeMux()
-	httpServerMux.Handle("/", http.FileServer(http.Dir(".")))
-	server := http.Server{
-		Addr:    "localhost:" + port,
+	httpServerMux.Handle("/", http.FileServer(http.Dir(filepathRoot)))
+	server := &http.Server{
+		Addr:    ":" + port,
 		Handler: httpServerMux,
 	}
-	log.Printf("Serving on port: %s\n", port)
+
+	log.Printf("Serving files from %s on port: %s\n", filepathRoot, port)
 	log.Fatal(server.ListenAndServe())
 }
