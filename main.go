@@ -20,9 +20,12 @@ func main() {
 	httpServerMux := http.NewServeMux()
 	handler := http.StripPrefix("/app", http.FileServer(http.Dir(filepathRoot)))
 	httpServerMux.Handle("/app/*", apiCfg.middlewareMetricsInc(handler))
-	httpServerMux.HandleFunc("/healthz", handlerReadiness)
-	httpServerMux.HandleFunc("/metrics", apiCfg.middlewareMetrics)
-	httpServerMux.HandleFunc("/reset", apiCfg.middlewareMetricsReset)
+
+	// To limit methods that are used for certain endpoints can follow
+	// a pattern of [METHOD ][HOST][/PATH]
+	httpServerMux.HandleFunc("GET /api/healthz", handlerReadiness)
+	httpServerMux.HandleFunc("GET /api/metrics", apiCfg.middlewareMetrics)
+	httpServerMux.HandleFunc("/api/reset", apiCfg.middlewareMetricsReset)
 	server := &http.Server{
 		Addr:    ":" + port,
 		Handler: httpServerMux,
